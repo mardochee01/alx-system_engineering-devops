@@ -1,23 +1,31 @@
 #!/usr/bin/python3
-"""Python script that returns information about his/her TODO list progress. """
-
+"""
+Python script that, using this REST API,
+for a given employee ID, returns information
+about his/her TODO list progress.
+"""
+import re
 import requests
-import sys
+from sys import argv
+
+"""Base Url of API Rest"""
+BaseUrl = 'https://jsonplaceholder.typicode.com'
 
 if __name__ == "__main__":
-    id = sys.argv[1]
-    url_user = "https://jsonplaceholder.typicode.com/users/{}".format(id)
-    url_tasks = ("https://jsonplaceholder.typicode.com/users/{}/todos".
-                 format(id))
-    response = requests.get(url_tasks)
-    tasks = response.json()
-    user_info = requests.get(url_user).json()
-    employee_name = user_info["name"]
-    list_of_done_tasks = [x for x in tasks if x['completed']]
-    number_of_done_tasks = len(list_of_done_tasks)
-    total_task_number = len(tasks)
-    print("Employee {} is done with tasks({}/{}):".format(employee_name,
-                                                          number_of_done_tasks,
-                                                          total_task_number))
-    for task in list_of_done_tasks:
-        print("\t {}".format(task["title"]))
+    if len(argv) > 1:
+        if re.fullmatch(r'\d+', argv[1]):
+            id = int(argv[1])
+            user_res = requests.get('{}/users/{}'.format(BaseUrl, id)).json()
+            todos_res = requests.get('{}/todos'.format(BaseUrl)).json()
+            user_name = user_res.get('name')
+            todos = list(filter(lambda x: x.get('userId') == id, todos_res))
+            todos_done = list(filter(lambda x: x.get('completed'), todos))
+            print(
+                'Employee {} is done with tasks({}/{}):'.format(
+                    user_name,
+                    len(todos_done),
+                    len(todos)
+                )
+            )
+            for todo_done in todos_done:
+                print('\t {}'.format(todo_done.get('title')))
