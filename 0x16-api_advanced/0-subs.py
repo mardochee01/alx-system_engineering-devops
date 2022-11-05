@@ -2,7 +2,7 @@
 
 """API REDIT
 """
-import request
+import requests
 
 def number_of_subscribers(subreddit):
     """If not a valid subreddit, return 0."""
