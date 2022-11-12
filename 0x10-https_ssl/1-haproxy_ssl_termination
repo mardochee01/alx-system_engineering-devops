@@ -41,5 +41,5 @@ listen 2431-lb-01
         server 2431-web-02 3.236.239.132:80 check
 frontend www
         bind *:80
-        bind *:433 ssl crt /etc/haproxy/ssl/www.alxmadse.tech.pem
+        bind *:443 ssl crt /etc/haproxy/ssl/www.alxmadse.tech.pem
         default_backend 2431-lb-01
